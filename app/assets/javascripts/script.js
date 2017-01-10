@@ -4,17 +4,16 @@ function getComments() {
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
         method: 'GET'
     }).done(function(jsondata){
+        createProgressBar($("#content"), $("#count").val());
         var count = 0;
         var frequency = {};
-
         for (var i = 0; i < jsondata.data.children.length && count < $("#count").val(); i++) {
             var entry = jsondata.data.children[i].data;
             frequency = appendFrequencyMap(frequency, entry);
             count++;
+            progressBarIncrement();
         }
-
         getAllComments(jsondata.data.after, count, frequency);
-
     }).fail(function() {
         alert("FAIL");
     });
@@ -32,8 +31,8 @@ function getAllComments(after, count, frequency) {
                 var entry = jsondata.data.children[i].data;
                 frequency = appendFrequencyMap(frequency, entry);
                 count++;
+                progressBarIncrement();
             }
-
             getAllComments(jsondata.data.after, count, frequency);
         });
     }
@@ -81,10 +80,11 @@ function displayCommentResults(frequency) {
         wordLabels.push(sorted[i][0]);
         scoreData.push(sorted[i][1]);
     }
-    testChart(wordLabels, scoreData);
+    createChart(wordLabels, scoreData);
 }
 
-function testChart(wordLabels, scoreData) {
+function createChart(wordLabels, scoreData) {
+    //$("#content").empty();
     var $canvas = $("<canvas>").appendTo($("#content"));
     $canvas.css("width", (wordLabels.length * 3).toString() + "em");
     new Chart($canvas, {
@@ -110,4 +110,12 @@ function testChart(wordLabels, scoreData) {
             }
         }
     });
+}
+
+function createProgressBar($container, max) {
+    $("<progress>").attr({"max": max, "id": "progressBar"}).val(0).appendTo($container);
+}
+
+function progressBarIncrement() {
+    $("#progressBar").get(0).value++;
 }
