@@ -127,3 +127,4 @@ function createProgressBar($container, max) {
 function progressBarIncrement() {
     $("#progressBar").get(0).value++;
 }
+

@@ -1,16 +1,23 @@
-function test1() {
-    var word_array = [
-        {text: "Lorem", weight: 15},
-        {text: "Ipsum", weight: 9, link: "http://jquery.com/"},
-        {text: "Dolor", weight: 6, html: {title: "I can haz any html attribute"}},
-        {text: "Sit", weight: 7},
-        {text: "Amet", weight: 5}
-    ];
-
-    $("#content").append( $("<div>").css({"width": "100vw", "height": "100vh"}).jQCloud(word_array));
-
+function getWordcloud() {
+    var weighted = false;
+    getCommentsBegin(weighted);
 }
 
 function displayWordcloud(frequency) {
+    var sorted = [];
+    for (var word in frequency) {
+        sorted.push([word, frequency[word]]);
+    }
 
+    sorted.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+
+    var wordArray = [];
+    var number = Math.max(parseInt($("#top").val(), 10), 1);
+    for (var i = 0; i < sorted.length && i < number; i++) {
+        wordArray.push({"text" : sorted[i][0], "weight" : sorted[i][1]});
+    }
+
+    $("#content").append( $("<div>").css({"width": "100vw", "height": "50vh"}).jQCloud(wordArray));
 }
