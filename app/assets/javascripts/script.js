@@ -1,4 +1,4 @@
-function test() {
+function getComments() {
     $.ajax({
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
         method: 'GET'
@@ -20,7 +20,8 @@ function test() {
 }
 
 function getAllComments(after, count, frequency) {
-    if (count < 99) {
+    var number = Math.min(parseInt($("#count").val(), 10), 999);
+    if (count < number) {
         $.ajax({
             url: 'https://www.reddit.com/user/' + $("#username").val() + '/comments/.json?',
             method: 'GET',
