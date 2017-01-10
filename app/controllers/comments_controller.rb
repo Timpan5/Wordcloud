@@ -1,4 +1,7 @@
 class CommentsController < ApplicationController
-  def retrieve
+  def totalScore
+  end
+
+  def wordScore
   end
 end

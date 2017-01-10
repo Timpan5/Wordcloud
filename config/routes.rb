@@ -1,3 +1,5 @@
 Rails.application.routes.draw do
-  root 'comments#retrieve'
+  root 'comments#totalScore'
+
+  get '/wordcloud', to: 'comments#wordcloud'
 end

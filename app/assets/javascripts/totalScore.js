@@ -1,4 +1,9 @@
-function getComments() {
+function getTotalScore(){
+    var weighted = true;
+    getCommentsBegin(weighted);
+}
+
+function getCommentsBegin(weighted) {
     $("#content").empty();
     $.ajax({
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
@@ -9,17 +14,17 @@ function getComments() {
         var frequency = {};
         for (var i = 0; i < jsondata.data.children.length && count < $("#count").val(); i++) {
             var entry = jsondata.data.children[i].data;
-            frequency = appendFrequencyMap(frequency, entry);
+            frequency = appendFrequencyMap(frequency, entry, weighted);
             count++;
             progressBarIncrement();
         }
-        getAllComments(jsondata.data.after, count, frequency);
+        getAllComments(jsondata.data.after, count, frequency, weighted);
     }).fail(function() {
         alert("FAIL");
     });
 }
 
-function getAllComments(after, count, frequency) {
+function getAllComments(after, count, frequency, weighted) {
     var number = Math.min(parseInt($("#count").val(), 10), 999);
     if (count < number) {
         $.ajax({
@@ -29,19 +34,22 @@ function getAllComments(after, count, frequency) {
         }).done(function (jsondata) {
             for (var i = 0; i < jsondata.data.children.length && count < number; i++) {
                 var entry = jsondata.data.children[i].data;
-                frequency = appendFrequencyMap(frequency, entry);
+                frequency = appendFrequencyMap(frequency, entry, weighted);
                 count++;
                 progressBarIncrement();
             }
-            getAllComments(jsondata.data.after, count, frequency);
+            getAllComments(jsondata.data.after, count, frequency, weighted);
         });
     }
-    else {
+    else if (weighted) {
         displayCommentResults(frequency);
+    }
+    else {
+        displayWordcloud(frequency);
     }
 }
 
-function appendFrequencyMap(frequency, entry) {
+function appendFrequencyMap(frequency, entry, weighted) {
     var pattern = /^(([a-z]+)\W?([a-z]+))|[a-z]$/;
     var words = entry.body;
     var wordsArray = words.split(/\s+/);
@@ -51,10 +59,10 @@ function appendFrequencyMap(frequency, entry) {
         if(word) {
             word = word[0];
             if (frequency.hasOwnProperty(word)) {
-                frequency[word] += entry.score;
+                weighted? frequency[word] += entry.score : frequency[word] += 1;
             }
             else {
-                frequency[word] = entry.score;
+                weighted? frequency[word] = entry.score : frequency[word] = 1;
             }
         }
     });
