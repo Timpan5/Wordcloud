@@ -1,4 +1,5 @@
 function getComments() {
+    $("#content").empty();
     $.ajax({
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
         method: 'GET'
@@ -6,7 +7,7 @@ function getComments() {
         var count = 0;
         var frequency = {};
 
-        for (var i = 0; i < jsondata.data.children.length; i++) {
+        for (var i = 0; i < jsondata.data.children.length && count < $("#count").val(); i++) {
             var entry = jsondata.data.children[i].data;
             frequency = appendFrequencyMap(frequency, entry);
             count++;
@@ -27,7 +28,7 @@ function getAllComments(after, count, frequency) {
             method: 'GET',
             data: {"after": after, "count": count}
         }).done(function (jsondata) {
-            for (var i = 0; i < jsondata.data.children.length; i++) {
+            for (var i = 0; i < jsondata.data.children.length && count < number; i++) {
                 var entry = jsondata.data.children[i].data;
                 frequency = appendFrequencyMap(frequency, entry);
                 count++;
@@ -62,7 +63,6 @@ function appendFrequencyMap(frequency, entry) {
 }
 
 function displayCommentResults(frequency) {
-    var $section = $("#content");
     var sorted = [];
 
     for (var word in frequency) {
@@ -76,7 +76,8 @@ function displayCommentResults(frequency) {
     var wordLabels = [];
     var scoreData = [];
 
-    for (var i = 0; i < sorted.length && i < 80; i++) {
+    var number = Math.max(parseInt($("#top").val(), 10), 1);
+    for (var i = 0; i < sorted.length && i < number; i++) {
         wordLabels.push(sorted[i][0]);
         scoreData.push(sorted[i][1]);
     }
