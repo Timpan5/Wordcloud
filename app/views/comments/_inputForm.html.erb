@@ -1,0 +1,17 @@
+<form action="#">
+  <table>
+    <tr>
+      <td><label for="username">Username: </label></td>
+      <td><input id="username" value=<%= yield :username %> /></td>
+    </tr>
+    <tr>
+      <td><label for="count">Number of Comments: </label></td>
+      <td><input id="count" value=<%= yield :count %> /></td>
+    </tr>
+    <tr>
+      <td><label for="top">View Top Results: </label></td>
+      <td><input id="top" value=<%= yield :top %> /></td>
+    </tr>
+  </table>
+  <button onclick=<%= yield :buttonFn %> >Submit</button>
+</form>

@@ -2,6 +2,6 @@ class CommentsController < ApplicationController
   def totalScore
   end
 
-  def wordScore
+  def wordcloud
   end
 end
