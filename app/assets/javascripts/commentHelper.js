@@ -1,4 +1,5 @@
 function getCommentsBegin(weighted) {
+    checkInputs();
     $("#content").empty();
     $.ajax({
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
@@ -50,4 +51,18 @@ function createProgressBar($container, max) {
 
 function progressBarIncrement() {
     $("#progressBar").get(0).value++;
+}
+
+function checkInputs() {
+    if (!$("#username").val()) {
+        alert("Username");
+    }
+
+    if (!$("#count").val()) {
+        alert("Count");
+    }
+
+    if (!$("#top").val()) {
+        alert("Top");
+    }
 }
