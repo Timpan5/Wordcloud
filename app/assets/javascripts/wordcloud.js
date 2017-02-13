@@ -1,5 +1,6 @@
 function getWordcloud() {
     var weighted = false;
+    getFromDatabase();
     getCommentsBegin(weighted);
 }
 

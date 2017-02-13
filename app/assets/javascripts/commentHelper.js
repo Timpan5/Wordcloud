@@ -1,5 +1,4 @@
 function getCommentsBegin(weighted) {
-    checkInputs();
     $("#content").empty();
     $.ajax({
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
@@ -45,6 +44,26 @@ function getAllComments(after, count, frequency, weighted) {
     }
 }
 
+function appendFrequencyMap(frequency, entry, weighted) {
+    var pattern = /^(([a-z]+)\W?([a-z]+))|[a-z]$/;
+    var words = entry.body;
+    var wordsArray = words.split(/\s+/);
+    wordsArray.forEach(function(word){
+        word = word.toLowerCase();
+        word = pattern.exec(word);
+        if(word) {
+            word = word[0];
+            if (frequency.hasOwnProperty(word)) {
+                weighted? frequency[word] += entry.score : frequency[word] += 1;
+            }
+            else {
+                weighted? frequency[word] = entry.score : frequency[word] = 1;
+            }
+        }
+    });
+    return frequency;
+}
+
 function createProgressBar($container, max) {
     $("<progress>").attr({"max": max, "id": "progressBar"}).val(0).appendTo($container);
 }
@@ -65,4 +84,20 @@ function checkInputs() {
     if (!$("#top").val()) {
         alert("Top");
     }
+}
+
+function getFromDatabase(weighted){
+    checkInputs();
+    var data = {"username" : $("#username").val()};
+    $.ajax({
+        url: 'retrieve',
+        method: 'POST',
+        data: data
+    }).done(function(jsondata) {
+        alert(JSON.stringify(jsondata));
+    }).fail(function(){
+        getCommentsBegin(weighted);
+    });
+
+
 }

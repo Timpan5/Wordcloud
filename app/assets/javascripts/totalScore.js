@@ -1,26 +1,7 @@
 function getTotalScore(){
     var weighted = true;
-    getCommentsBegin(weighted);
-}
-
-function appendFrequencyMap(frequency, entry, weighted) {
-    var pattern = /^(([a-z]+)\W?([a-z]+))|[a-z]$/;
-    var words = entry.body;
-    var wordsArray = words.split(/\s+/);
-    wordsArray.forEach(function(word){
-        word = word.toLowerCase();
-        word = pattern.exec(word);
-        if(word) {
-            word = word[0];
-            if (frequency.hasOwnProperty(word)) {
-                weighted? frequency[word] += entry.score : frequency[word] += 1;
-            }
-            else {
-                weighted? frequency[word] = entry.score : frequency[word] = 1;
-            }
-        }
-    });
-    return frequency;
+    getFromDatabase(weighted);
+    //getCommentsBegin(weighted);
 }
 
 function displayCommentResults(frequency) {
