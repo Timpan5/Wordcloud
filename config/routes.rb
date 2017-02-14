@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   get '/totalscore', to: 'comments#totalScore'
   get '/wordcloud', to: 'comments#wordcloud'
   post '/retrieve', to: 'comments#retrieve'
+  post '/append', to: 'comments#append'
 end
