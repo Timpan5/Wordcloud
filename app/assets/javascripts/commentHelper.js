@@ -4,6 +4,7 @@ function getCommentsBegin(weighted) {
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
         method: 'GET'
     }).done(function(jsondata){
+        saveData(jsondata);
         createProgressBar($("#content"), $("#count").val());
         var count = 0;
         var frequency = {};
@@ -27,6 +28,7 @@ function getAllComments(after, count, frequency, weighted) {
             method: 'GET',
             data: {"after": after, "count": count}
         }).done(function (jsondata) {
+            saveData(jsondata);
             for (var i = 0; i < jsondata.data.children.length && count < number; i++) {
                 var entry = jsondata.data.children[i].data;
                 frequency = appendFrequencyMap(frequency, entry, weighted);
@@ -88,7 +90,7 @@ function checkInputs() {
 
 function getFromDatabase(weighted){
     checkInputs();
-    var data = {"username" : $("#username").val()};
+    var data = {"username" : $("#username").val(), "count" : Math.min(parseInt($("#count").val(), 10), 999)};
     $.ajax({
         url: 'retrieve',
         method: 'POST',
@@ -100,4 +102,13 @@ function getFromDatabase(weighted){
     });
 
 
+}
+
+function saveData(jsondata) {
+    var data = {"username" : $("#username").val(), "comments" : jsondata};
+    $.ajax({
+        url: 'append',
+        method: 'POST',
+        data: data
+    });
 }

@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   get '/wordcloud', to: 'comments#wordcloud'
   post '/retrieve', to: 'comments#retrieve'
   post '/append', to: 'comments#append'
+  get '/comments/:username', to: 'comments#old'
 end
