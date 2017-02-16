@@ -1,7 +1,7 @@
 function getWordcloud() {
     var weighted = false;
-    getFromDatabase();
-    getCommentsBegin(weighted);
+    getFromDatabase(weighted);
+    //getCommentsBegin(weighted);
 }
 
 function displayWordcloud(frequency) {

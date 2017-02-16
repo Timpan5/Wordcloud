@@ -9,18 +9,15 @@ class CommentsController < ApplicationController
     @comment = (Comment.where(username: params[:username])).first
     #check count
     if @comment
-      if @comment.updated_at > 2.minutes.ago
-        p "Recent"
+      if (@comment.updated_at > 2.minutes.ago)&& (@comment.count == params[:count].to_i)
         render :json => @comment
       else
-        p "Old"
         @comment.destroy
         @comment = Comment.new(:username => params[:username], :count => params[:count])
         @comment.save
         render :status => 404
       end
     else
-      p "Fail"
       @comment = Comment.new(:username => params[:username], :count => params[:count])
       @comment.save
       render :status => 404
@@ -29,8 +26,8 @@ class CommentsController < ApplicationController
 
   def append
     @comment = (Comment.where(username: params[:username])).first
-    p "In"
-    (@comment.data).push(params[:comments])
+    @comment.weighted = params[:weighted];
+    @comment.unweighted = params[:unweighted];
     @comment.save
   end
 
