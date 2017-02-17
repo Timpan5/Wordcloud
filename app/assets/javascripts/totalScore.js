@@ -1,7 +1,6 @@
 function getTotalScore(){
     var weighted = true;
     getFromDatabase(weighted);
-    //getCommentsBegin(weighted);
 }
 
 function displayCommentResults(frequency) {
@@ -27,7 +26,6 @@ function displayCommentResults(frequency) {
 }
 
 function createChart(wordLabels, scoreData) {
-    //$("#content").empty();
     var $canvas = $("<canvas>").appendTo($("#content"));
     $canvas.css("width", (wordLabels.length * 3).toString() + "em");
     new Chart($canvas, {

@@ -1,20 +1,28 @@
+function getFromDatabase(weighted){
+    checkInputs();
+    $("#content").empty();
+    var data = {"username" : $("#username").val(), "count" : Math.min(parseInt($("#count").val(), 10), 999)};
+    $.ajax({
+        url: 'retrieve',
+        method: 'POST',
+        data: data
+    }).done(function(jsondata) {
+        weighted? displayCommentResults(jsondata.weighted) : displayWordcloud(jsondata.unweighted);
+    }).fail(function(){
+        getCommentsBegin(weighted);
+    });
+}
+
 function getCommentsBegin(weighted) {
     $.ajax({
         url: 'https://www.reddit.com/user/'+ $("#username").val() +'/comments/.json?',
         method: 'GET'
     }).done(function(jsondata){
-        //saveData(jsondata);
         createProgressBar($("#content"), $("#count").val());
         var count = 0;
         var frequency = {'weighted' : {}, 'unweighted' : {}};
-        //alert(jsondata.data.children.length);
-        for (var i = 0; i < jsondata.data.children.length && count < $("#count").val(); i++) {
-            var entry = jsondata.data.children[i].data;
-            frequency = appendFrequencyMap(frequency, entry, weighted);
-            count++;
-            progressBarIncrement();
-        }
-        getAllComments(jsondata.data.after, count, frequency, weighted);
+        var number = Math.min(parseInt($("#count").val(), 10), 999);
+        processComments(jsondata, count, number, frequency, weighted);
     }).fail(function() {
         alert("FAIL");
     });
@@ -28,27 +36,26 @@ function getAllComments(after, count, frequency, weighted) {
             method: 'GET',
             data: {"after": after, "count": count}
         }).done(function (jsondata) {
-            //saveData(jsondata);
-            for (var i = 0; i < jsondata.data.children.length && count < number; i++) {
-                var entry = jsondata.data.children[i].data;
-                frequency = appendFrequencyMap(frequency, entry, weighted);
-                count++;
-                progressBarIncrement();
-            }
-            getAllComments(jsondata.data.after, count, frequency, weighted);
+            processComments(jsondata, count, number, frequency, weighted);
         });
-    }
-    else if (weighted) {
-        saveData(frequency);
-        displayCommentResults(frequency.weighted);
     }
     else {
         saveData(frequency);
-        displayWordcloud(frequency.unweighted);
+        weighted? displayCommentResults(frequency.weighted) : displayWordcloud(frequency.unweighted);
     }
 }
 
-function appendFrequencyMap(frequency, entry, weighted) {
+function processComments(jsondata, count, number, frequency, weighted){
+    for (var i = 0; i < jsondata.data.children.length && count < number; i++) {
+        var entry = jsondata.data.children[i].data;
+        frequency = appendFrequencyMap(frequency, entry);
+        count++;
+        progressBarIncrement();
+    }
+    getAllComments(jsondata.data.after, count, frequency, weighted);
+}
+
+function appendFrequencyMap(frequency, entry) {
     var pattern = /^(([a-z]+)\W?([a-z]+))|[a-z]$/;
     var words = entry.body;
     var wordsArray = words.split(/\s+/);
@@ -68,6 +75,15 @@ function appendFrequencyMap(frequency, entry, weighted) {
         }
     });
     return frequency;
+}
+
+function saveData(frequency) {
+    var data = {"username" : $("#username").val(), "weighted" : frequency.weighted, "unweighted" : frequency.unweighted};
+    $.ajax({
+        url: 'append',
+        method: 'POST',
+        data: data
+    });
 }
 
 function createProgressBar($container, max) {
@@ -90,36 +106,4 @@ function checkInputs() {
     if (!$("#top").val()) {
         alert("Top");
     }
-}
-
-function getFromDatabase(weighted){
-    checkInputs();
-    $("#content").empty();
-    var data = {"username" : $("#username").val(), "count" : Math.min(parseInt($("#count").val(), 10), 999)};
-    $.ajax({
-        url: 'retrieve',
-        method: 'POST',
-        data: data
-    }).done(function(jsondata) {
-        if (weighted) {
-            displayCommentResults(jsondata.weighted);
-        }
-        else {
-            displayWordcloud(jsondata.unweighted);
-        }
-
-    }).fail(function(){
-        getCommentsBegin(weighted);
-    });
-
-
-}
-
-function saveData(frequency) {
-    var data = {"username" : $("#username").val(), "weighted" : frequency.weighted, "unweighted" : frequency.unweighted};
-    $.ajax({
-        url: 'append',
-        method: 'POST',
-        data: data
-    });
 }
