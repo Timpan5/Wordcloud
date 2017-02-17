@@ -1,24 +1,3 @@
-# README
+## Work In Progress
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+#Uses Reddit API to display a user's comment data. Currently, it is possible to view data on the individual words a Reddit user posts in teir comments, as well as their karma score adjusted for each word used. This shows what types of words a user typically writes in their comments, and the karma score indicates how other people vote on their comments and identifies the words most commonly appearing in higher scoring comments.
